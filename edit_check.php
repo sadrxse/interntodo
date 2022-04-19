@@ -12,7 +12,6 @@ $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
 ?>
 
 <div class="container">
-
 <!-- タイトル未入力 -->
 <?php if($title==''){ ?>
     <div class="alert alert-success" role="alert" style="margin-top:30px;">
@@ -20,7 +19,6 @@ $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
         <hr>
         <button class="btn btn-secondary" onclick="history.back()">back</button>
     </div>
-
 <!-- タイトル文字数オーバー -->
 <?php } elseif(mb_strlen($title)>200){ ?>
     <div class="alert alert-success" role="alert" style="margin-top:50px;">
@@ -28,7 +26,6 @@ $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
         <hr>
         <button class="btn btn-secondary" onclick="history.back()">back</button>
     </div>
-
 <!-- コンテント未入力 -->
 <?php } elseif($content==''){ ?>
     <div class="alert alert-success" role="alert" style="margin-top:50px;">
@@ -36,17 +33,14 @@ $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
         <hr>
         <button class="btn btn-secondary" onclick="history.back()">back</button>
     </div>
-    
 <?php } else{ ?>
     <h2 style="margin-top:30px;">Edit this ToDo?</h2>
-
     <div class="card" style="width: 50rem; margin: 30px 0 30px 0;">
         <h5 class="card-header">Title: <?php echo $title; ?></h5>
         <div class="card-body">
             <p>Content: <?php echo $content; ?></p>
         </div>
     </div>
-
     <form method="post" action="edit_done.php">
         <input type="hidden" name="id" value="<?php echo $id; ?>">
         <input type="hidden" name="title" value="<?php echo $title; ?>">
@@ -56,7 +50,6 @@ $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
         <input type="submit" class="btn btn-outline-primary" value="OK" >
     </form>
 <?php } ?>
-
 </div>
 </body>
 </html>
