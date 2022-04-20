@@ -1,15 +1,20 @@
 <?php
 $page_title = "index";
 include('./header.php');
-include('./function.php');
+include('functions/controller.php');
+include('functions/page.php');
+include('functions/pagination.php');
 
-$inst = new setValue();
-$page = $inst->is_page();
-$start_number = $inst->is_startnum();
-$pagination = $inst->index_pagination();
+$ispage = new IsPage();
+$page = $ispage->is_page();
+$start_number = $ispage->is_startnumber();
+
+$ispagination = new IsPagination();
+$pagination = $ispagination->setPagination();
 
 $controller = new Controller();
 $stmt = $controller->selectData($start_number);
+$stmt->execute();
 
 $dbh = null;
 ?>
@@ -39,23 +44,29 @@ while(true):
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <p style="padding-top:10px; margin-right:10px;"><?php echo $updated_at; ?></p>
                 <form method="post" action="edit.php">
-                    <input type="hidden" name="id" value="<?php print $id; ?>">
-                    <input type="hidden" name="title" value="<?php print $title; ?>">
-                    <input type="hidden" name="content" value="<?php print $content; ?>">
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
+                    <input type="hidden" name="title" value="<?php echo $title; ?>">
+                    <input type="hidden" name="content" value="<?php echo $content; ?>">
                     <button type="submit" class="btn btn-outline-primary">Edit</button>
                 </form>
                 <form method="post" action="delete.php">
-                    <input type="hidden" name="id" value="<?php print $id; ?>">
-                    <input type="hidden" name="title" value="<?php print $title; ?>">
-                    <input type="hidden" name="content" value="<?php print $content; ?>">
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
+                    <input type="hidden" name="title" value="<?php echo $title; ?>">
+                    <input type="hidden" name="content" value="<?php echo $content; ?>">
                     <button type="submit" class="btn btn-secondary">Delete</button>
                 </form>
             </div>
         </div>
     </div>
-<?php endwhile;
-include('./pagination.php')
-?>
+<?php endwhile; ?>
+    <nav aria-label="...">
+        <ul class="pagination">
+        <?php
+        $createpagination = new CreatePagination($page,$pagination);
+        echo $createpagination->createPagination();
+        ?>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>

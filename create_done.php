@@ -1,13 +1,14 @@
 <?php
 $page_title = "create_done";
 include("./header.php");
-include("./function.php");
+include("functions/controller.php");
 
 $title = $_POST['title'];
 $content = $_POST['content'];
 
 $controller = new Controller();
-$controller->insertData($title,$content);
+$stmt = $controller->insertData($title,$content);
+$stmt->execute();
 
 $dbh = null;
 ?>

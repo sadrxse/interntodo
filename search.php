@@ -1,11 +1,13 @@
 <?php
 $page_title = "search";
 include("./header.php");
-include('./function.php');
+include('functions/controller.php');
+include('functions/page.php');
+include('functions/pagination.php');
 
-$inst = new setValue();
-$page = $inst->is_page();
-$start_number = $inst->is_startnum();
+$ispage = new IsPage();
+$page = $ispage->is_page();
+$start_number = $ispage->is_startnumber();
 
 $keyword = $_GET["keyword"];
 $keyword = htmlspecialchars($keyword,ENT_QUOTES,'UTF-8');
@@ -22,27 +24,28 @@ if(mb_strlen($keyword)==0){ ?>
 <?php
 //キーワードありのとき
 } else {
+$ispagination = new IsPagination();
+$pagination = $ispagination->setPagination($keyword);
 
-$pagination = $inst->search_pagination($keyword);
 $controller = new Controller();
 $stmt = $controller->searchData($keyword,$start_number);
+$stmt->execute();
 $page_num = $stmt->fetchColumn();
 
 $dbh = null;
 
-//検索結果が存在しないとき
-if($page_num==false){
-?>
-    <div class="container">
-        <div class="alert alert-success" role="alert" style="margin-top:30px;">
-            <h4 class="alert-heading">No such ToDo found</h4>
-            <hr>
-            <button class="btn btn-secondary" onclick="history.back()">back</button>
-        </div>
+//ToDo存在しないとき
+if($page_num==false){ ?>
+<div class="container">
+    <div class="alert alert-success" role="alert" style="margin-top:30px;">
+        <h4 class="alert-heading">No such ToDo found</h4>
+        <hr>
+        <button class="btn btn-secondary" onclick="history.back()">back</button>
     </div>
+</div>
 
 <?php
-//存在するとき
+//ToDo存在するとき
 } else { ?>
 <div class="container">
     <h1 style="margin-top:30px;">Search results for "<?php echo $keyword; ?>"</h1>
@@ -59,7 +62,6 @@ while(true):
 
     $title = htmlspecialchars($title,ENT_QUOTES,'UTF-8');
     $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
-
 ?>
     <div class="card " style="width: 50rem; margin: 30px 0 30px 0;">
         <div class="card-header">ToDo</div>
@@ -69,25 +71,33 @@ while(true):
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                 <p style="padding-top:10px; margin-right:10px;"><?php echo $updated_at; ?></p>
                 <form method="post" action="edit.php">
-                    <input type="hidden" name="id" value="<?php print $id; ?>">
-                    <input type="hidden" name="title" value="<?php print $title; ?>">
-                    <input type="hidden" name="content" value="<?php print $content; ?>">
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
+                    <input type="hidden" name="title" value="<?php echo $title; ?>">
+                    <input type="hidden" name="content" value="<?php echo $content; ?>">
                     <button type="submit" class="btn btn-outline-primary">Edit</button>
                 </form>
                 <form method="post" action="delete.php">
-                    <input type="hidden" name="id" value="<?php print $id; ?>">
-                    <input type="hidden" name="title" value="<?php print $title; ?>">
-                    <input type="hidden" name="content" value="<?php print $content; ?>">
+                    <input type="hidden" name="id" value="<?php echo $id; ?>">
+                    <input type="hidden" name="title" value="<?php echo $title; ?>">
+                    <input type="hidden" name="content" value="<?php echo $content; ?>">
                     <button type="submit" class="btn btn-secondary">Delete</button>
                 </form>
             </div>
         </div>
     </div>
-<?php endwhile;
-include("./pagination.php");
-}//存在するとき
-}//キーワードありのとき
-?>
+<?php endwhile; ?>
+    <nav aria-label="...">
+        <ul class="pagination">
+        <?php
+        $createpagination = new CreatePagination($page,$pagination);
+        echo $createpagination->createPagination($keyword);
+        ?>
+        </ul>
+    </nav>
 </div>
+<?php 
+} //キーワードある時
+} //ToDo存在するとき
+ ?>
 </body>
 </html>

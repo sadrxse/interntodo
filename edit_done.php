@@ -1,14 +1,15 @@
 <?php
 $page_title = "edit_done";
 include("./header.php");
-include("./function.php");
+include("functions/controller.php");
 
 $id = $_POST['id'];
 $title = $_POST['title'];
 $content = $_POST['content'];
 
 $controller = new Controller();
-$controller->updateData($title,$content,$id);
+$stmt = $controller->updateData($title,$content,$id);
+$stmt->execute();
 
 $dbh = null;
 ?>
