@@ -67,7 +67,7 @@ class Controller extends ConnectDB
 }
 
 //ページネーション数算出
-class IsPagination extends ConnectDB
+class CountPages extends ConnectDB
 {
     private $pagination;
 
@@ -87,11 +87,11 @@ class IsPagination extends ConnectDB
         $stmt->execute();
         $page_number = $stmt->fetchColumn();
         $this->pagination = ceil($page_number/5);
-        return $this->pagination;
+        return null;
     }
     public function getPagination($keyword = null){
         $this->setPagination($keyword);
-        return $this->$pagination;
+        return $this->pagination;
     }
 }
 

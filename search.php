@@ -4,6 +4,7 @@ include("./header.php");
 include('functions/controller.php');
 include('functions/page.php');
 include('functions/pagination.php');
+include('functions/validation.php');
 
 $ispage = new IsPage();
 $page = $ispage->is_page();
@@ -12,11 +13,13 @@ $start_number = $ispage->is_startnumber();
 $keyword = $_GET["keyword"];
 $keyword = htmlspecialchars($keyword,ENT_QUOTES,'UTF-8');
 
+$validator = new Validator();
 //キーワード未入力のとき
-if(mb_strlen($keyword)==0){ ?>
+if(!($validator->issetKeyword($keyword))){
+    $message = $validator->getMessage(); ?>
     <div class="container">
         <div class="alert alert-success" role="alert" style="margin-top:30px;">
-            <h4 class="alert-heading">The keyword is null</h4>
+            <h4 class="alert-heading"><?php echo $message; ?></h4>
             <hr>
             <button class="btn btn-secondary" onclick="history.back()">back</button>
         </div>
@@ -24,31 +27,30 @@ if(mb_strlen($keyword)==0){ ?>
 <?php
 //キーワードありのとき
 } else {
-$ispagination = new IsPagination();
-$pagination = $ispagination->setPagination($keyword);
+$countpages = new CountPages();
+$pagination = $countpages->getPagination($keyword);
 
 $controller = new Controller();
 $stmt = $controller->searchData($keyword,$start_number);
 $stmt->execute();
-$page_num = $stmt->fetchColumn();
-
 $dbh = null;
 
 //ToDo存在しないとき
-if($page_num==false){ ?>
-<div class="container">
-    <div class="alert alert-success" role="alert" style="margin-top:30px;">
-        <h4 class="alert-heading">No such ToDo found</h4>
-        <hr>
-        <button class="btn btn-secondary" onclick="history.back()">back</button>
+if($validator->dataExists($stmt)==false){
+    $message = $validator->getMessage(); ?>
+    <div class="container">
+        <div class="alert alert-success" role="alert" style="margin-top:30px;">
+            <h4 class="alert-heading"><?php echo $message; ?></h4>
+            <hr>
+            <button class="btn btn-secondary" onclick="history.back()">back</button>
+        </div>
     </div>
-</div>
 
 <?php
 //ToDo存在するとき
 } else { ?>
-<div class="container">
-    <h1 style="margin-top:30px;">Search results for "<?php echo $keyword; ?>"</h1>
+    <div class="container">
+        <h1 style="margin-top:30px;">Search results for "<?php echo $keyword; ?>"</h1>
 <?php
 while(true):
     $rec = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -96,7 +98,7 @@ while(true):
     </nav>
 </div>
 <?php 
-} //キーワードある時
+} //キーワードあるとき
 } //ToDo存在するとき
  ?>
 </body>

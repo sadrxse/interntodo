@@ -1,5 +1,5 @@
 <?php
-//ページネーション数算出
+//ページ番号算出
 class IsPage
 {
     private $page;

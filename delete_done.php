@@ -2,6 +2,7 @@
 $page_title = "delete_done";
 include("./header.php");
 include("functions/controller.php");
+include("functions/validation.php");
 
 $id = $_POST['id'];
 $title = $_POST['title'];
@@ -10,15 +11,15 @@ $content = $_POST['content'];
 $controller = new Controller();
 $stmt = $controller->checkData($id);
 $stmt->execute();
-$post_num = $stmt->fetchColumn();
+
+$validator = new Validator();
+$data = $validator->dataExists($stmt);
 
 //存在するとき
-if($post_num==1){
-
-$stmt = $controller->deleteData($id);
-$stmt->execute();
-
-$dbh = null;
+if($data){
+    $stmt = $controller->deleteData($id);
+    $stmt->execute();
+    $dbh = null;
 ?>
 
 <div class="container">
@@ -30,10 +31,12 @@ $dbh = null;
 </div>
 <?php 
 //存在しないとき
-} else { ?>
-    <div class="container">
+} else {
+    $message = $validator->getMessage();
+?>
+<div class="container">
     <div class="alert alert-success" role="alert" style="margin-top:30px;">
-        <h4 class="alert-heading">No such ToDo found</h4>
+        <h4 class="alert-heading"><?php echo $message; ?></h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>
     </div>

@@ -10,7 +10,7 @@ $title = htmlspecialchars($title,ENT_QUOTES,'UTF-8');
 $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
 ?>
 <div class="container">
-    <h2 style="margin-top:30px;">Are you sure you want to delete this ToDo?</h2>
+    <h2 style="margin-top:30px;">Delete this ToDo?</h2>
 
     <div class="card" style="width: 50rem; margin: 30px 0 30px 0;">
         <h5 class="card-header">Title: <?php echo $title; ?></h5>

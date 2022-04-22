@@ -9,8 +9,8 @@ $ispage = new IsPage();
 $page = $ispage->is_page();
 $start_number = $ispage->is_startnumber();
 
-$ispagination = new IsPagination();
-$pagination = $ispagination->setPagination();
+$countpages = new CountPages();
+$pagination = $countpages->getPagination();
 
 $controller = new Controller();
 $stmt = $controller->selectData($start_number);
