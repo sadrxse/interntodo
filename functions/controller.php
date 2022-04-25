@@ -21,21 +21,22 @@ class ConnectDB
 //DB操作
 class Controller extends ConnectDB
 {
+    //5件ずつ取得
     public function selectData($start_number){
-        //1ページにつき5個のpost取得
         $sql = "SELECT * FROM posts ORDER BY updated_at DESC LIMIT ?,5";
         $stmt = $this->dbh()->prepare($sql);
         $stmt->bindValue(1,$start_number, PDO::PARAM_INT);
         return $stmt;
     }
+    //検索結果を5件ずつ取得
     public function searchData($keyword,$start_number){
-        //1ページにつき5個のpost取得
         $sql = "SELECT * FROM posts WHERE title LIKE ? ORDER BY updated_at DESC LIMIT ?,5";
         $stmt = $this->dbh()->prepare($sql);
         $stmt->bindValue(1,"%{$keyword}%",PDO::PARAM_STR);
         $stmt->bindValue(2,$start_number, PDO::PARAM_INT);
         return $stmt;
     }
+    //ToDoの作成
     public function insertData($title,$content){
         $sql = 'INSERT INTO posts(title,content) VALUES (?,?)';
         $stmt = $this->dbh()->prepare($sql);
@@ -43,7 +44,8 @@ class Controller extends ConnectDB
         $stmt->bindValue(2,$content,PDO::PARAM_STR);
         return $stmt;
     }
-    public function updateData($title,$content,$id){
+    //ToDoの更新
+    public function updateData($id,$title,$content){
         $sql = 'UPDATE posts SET title=?,content=? WHERE id=?';
         $stmt = $this->dbh()->prepare($sql);
         $stmt->bindValue(1,$title,PDO::PARAM_STR);
@@ -51,13 +53,16 @@ class Controller extends ConnectDB
         $stmt->bindValue(3,$id,PDO::PARAM_INT);
         return $stmt;
     }
-    public function checkData($id){
-        //削除するToDoが存在するかの確認
-        $sql = "SELECT COUNT(*) FROM posts WHERE id=?";
+    //ToDoが存在するかの確認
+    public function checkData($id,$title,$content){
+        $sql = "SELECT COUNT(*) FROM posts WHERE id=? AND title=? AND content=?";
         $stmt = $this->dbh()->prepare($sql);
         $stmt->bindValue(1,$id,PDO::PARAM_INT);
+        $stmt->bindValue(2,$title,PDO::PARAM_STR);
+        $stmt->bindValue(3,$content,PDO::PARAM_STR);
         return $stmt;
     }
+    //ToDoの削除
     public function deleteData($id){
         $sql = 'DELETE FROM posts WHERE id=?';
         $stmt = $this->dbh()->prepare($sql);
@@ -70,18 +75,8 @@ class Controller extends ConnectDB
 class CountPages extends ConnectDB
 {
     private $pagination;
-
-    public function countPost($keyword = null){
-        if($keyword){
-            $sql = "SELECT COUNT(*) id FROM posts WHERE title LIKE ?";
-            $stmt = $this->dbh()->prepare($sql);
-            $stmt->bindValue(1,"%{$keyword}%",PDO::PARAM_STR);
-            return $stmt;
-        }
-        $sql = "SELECT COUNT(*) id FROM posts";
-        $stmt = $this->dbh()->prepare($sql);
-        return $stmt;
-    }
+    
+    //pagination数セット
     public function setPagination($keyword = null){
         $stmt = $this->countPost($keyword);
         $stmt->execute();
@@ -89,6 +84,19 @@ class CountPages extends ConnectDB
         $this->pagination = ceil($page_number/5);
         return null;
     }
+    //全件カウント
+    public function countPost($keyword = null){
+        $sql = "SELECT COUNT(*) id FROM posts";
+        if($keyword){
+            $sql .= " WHERE title LIKE ?";
+            $stmt = $this->dbh()->prepare($sql);
+            $stmt->bindValue(1,"%{$keyword}%",PDO::PARAM_STR);
+            return $stmt;
+        }
+        $stmt = $this->dbh()->prepare($sql);
+        return $stmt;
+    }
+    //pagination取得
     public function getPagination($keyword = null){
         $this->setPagination($keyword);
         return $this->pagination;

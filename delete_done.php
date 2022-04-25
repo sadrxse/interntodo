@@ -9,7 +9,7 @@ $title = $_POST['title'];
 $content = $_POST['content'];
 
 $controller = new Controller();
-$stmt = $controller->checkData($id);
+$stmt = $controller->checkData($id,$title,$content);
 $stmt->execute();
 
 $validator = new Validator();
@@ -23,7 +23,7 @@ if($data){
 ?>
 
 <div class="container">
-    <div class="alert alert-success" role="alert" style="margin-top:30px;">
+    <div class="alert alert-success　mt-4" role="alert">
         <h4 class="alert-heading">ToDo deleted</h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>
@@ -35,7 +35,7 @@ if($data){
     $message = $validator->getMessage();
 ?>
 <div class="container">
-    <div class="alert alert-success" role="alert" style="margin-top:30px;">
+    <div class="alert alert-success mt-4" role="alert">
         <h4 class="alert-heading"><?php echo $message; ?></h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>

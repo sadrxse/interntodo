@@ -36,7 +36,7 @@ while(true):
     $title = htmlspecialchars($title,ENT_QUOTES,'UTF-8');
     $content = htmlspecialchars($content,ENT_QUOTES,'UTF-8');
 ?>
-    <div class="card" style="margin: 30px 0 30px 0;">
+    <div class="card my-4 w-75">
         <div class="card-header">ToDo</div>
         <div class="card-body">
             <h5 class=card-title><?php echo $title; ?></h5>
@@ -62,7 +62,7 @@ while(true):
     <nav aria-label="...">
         <ul class="pagination">
         <?php
-        $createpagination = new CreatePagination($page,$pagination);
+        $createpagination = new IndexPagination($page,$pagination);
         echo $createpagination->createPagination();
         ?>
         </ul>
