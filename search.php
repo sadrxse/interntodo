@@ -2,13 +2,12 @@
 $page_title = "search";
 include("./header.php");
 include('functions/controller.php');
-include('functions/page.php');
 include('functions/pagination.php');
 include('functions/validation.php');
 
-$ispage = new IsPage();
-$page = $ispage->is_page();
-$start_number = $ispage->is_startnumber();
+$setting = new SetValues();
+$page = $setting->getPage();
+$start_number = $setting->getStartnumber();
 
 $keyword = $_GET["keyword"];
 $keyword = htmlspecialchars($keyword,ENT_QUOTES,'UTF-8');
@@ -27,8 +26,7 @@ if(!($validator->issetKeyword($keyword))){
 <?php
 //キーワードありのとき
 } else {
-$countpages = new CountPages();
-$pagination = $countpages->getPagination($keyword);
+$pagination = $setting->getPagination($keyword);
 
 $controller = new Controller();
 $stmt = $controller->searchData($keyword,$start_number);

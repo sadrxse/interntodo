@@ -23,7 +23,7 @@ if($data){
 ?>
 
 <div class="container">
-    <div class="alert alert-success　mt-4" role="alert">
+    <div class="alert alert-success mt-4" role="alert">
         <h4 class="alert-heading">ToDo deleted</h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>

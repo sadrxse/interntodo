@@ -71,11 +71,35 @@ class Controller extends ConnectDB
     }
 }
 
-//ページネーション数算出
-class CountPages extends ConnectDB
+//ページに関する各種値の算出
+class SetValues extends ConnectDB
 {
+    private $page;
+    private $start_number;
     private $pagination;
     
+    function __construct(){
+        $this->page = 1;
+        //現在のページを取得
+        if(isset($_GET['page'])){
+            $this->page = $_GET['page'];
+        }
+        //現在のページで取得する最初のpost番号
+        $this->start_number = ($this->page-1)*5; 
+    }
+    //ページ番号
+    public function getPage(){
+        return $this->page;
+    }
+    //取得開始位置
+    public function getStartnumber(){
+        return $this->start_number;
+    }
+    //pagination取得
+    public function getPagination($keyword = null){
+        $this->setPagination($keyword);
+        return $this->pagination;
+    }
     //pagination数セット
     public function setPagination($keyword = null){
         $stmt = $this->countPost($keyword);
@@ -96,11 +120,7 @@ class CountPages extends ConnectDB
         $stmt = $this->dbh()->prepare($sql);
         return $stmt;
     }
-    //pagination取得
-    public function getPagination($keyword = null){
-        $this->setPagination($keyword);
-        return $this->pagination;
-    }
 }
+
 
 ?>

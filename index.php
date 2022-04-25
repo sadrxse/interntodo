@@ -2,15 +2,12 @@
 $page_title = "index";
 include('./header.php');
 include('functions/controller.php');
-include('functions/page.php');
 include('functions/pagination.php');
 
-$ispage = new IsPage();
-$page = $ispage->is_page();
-$start_number = $ispage->is_startnumber();
-
-$countpages = new CountPages();
-$pagination = $countpages->getPagination();
+$setting = new Setvalues();
+$page = $setting->getPage();
+$start_number = $setting->getStartnumber();
+$pagination = $setting->getPagination();
 
 $controller = new Controller();
 $stmt = $controller->selectData($start_number);
