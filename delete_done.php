@@ -1,55 +1,46 @@
 <?php
 $page_title = "delete_done";
 include("./header.php");
+include("functions/controller.php");
+include("functions/validation.php");
 
 $id = $_POST['id'];
 $title = $_POST['title'];
 $content = $_POST['content'];
 
-$dsn = 'mysql:dbname=posts;host=localhost;charset=utf8';
-$user = 'root';
-$password = 'root';
-$dbh = new PDO($dsn,$user,$password);
-$dbh->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-
-//削除するToDoが存在するかの確認
-$sql = "SELECT COUNT(*) FROM posts WHERE id=? AND title=? AND content=?";
-$stmt = $dbh->prepare($sql);
-$stmt->bindValue(1,$id,PDO::PARAM_INT);
-$stmt->bindValue(2,$title,PDO::PARAM_STR);
-$stmt->bindValue(3,$content,PDO::PARAM_STR);
+$controller = new Controller();
+$stmt = $controller->checkData($id,$title,$content);
 $stmt->execute();
-$post_num = $stmt->fetchColumn();
+
+$validator = new Validator();
+$data = $validator->dataExists($stmt);
 
 //存在するとき
-if($post_num==1){
-
-$sql = 'DELETE FROM posts WHERE id=?';
-$stmt = $dbh->prepare($sql);
-$stmt->bindValue(1,$id,PDO::PARAM_INT);
-$stmt->execute();
-
-$dbh = null;
-
+if($data){
+    $stmt = $controller->deleteData($id);
+    $stmt->execute();
+    $dbh = null;
 ?>
+
 <div class="container">
-    <div class="alert alert-success" role="alert" style="margin-top:30px;">
+    <div class="alert alert-success mt-4" role="alert">
         <h4 class="alert-heading">ToDo deleted</h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>
     </div>
 </div>
-
-<!-- 存在しないとき -->
-<?php } else { ?>
-    <div class="container">
-    <div class="alert alert-success" role="alert" style="margin-top:30px;">
-        <h4 class="alert-heading">No such ToDo found</h4>
+<?php 
+//存在しないとき
+} else {
+    $message = $validator->getMessage();
+?>
+<div class="container">
+    <div class="alert alert-success mt-4" role="alert">
+        <h4 class="alert-heading"><?php echo $message; ?></h4>
         <hr>
         <p class="mb-0"><a href="index.php">Top</a></p>
     </div>
 </div>
 <?php } ?>
-
 </body>
 </html>

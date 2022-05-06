@@ -1,20 +1,13 @@
 <?php
 $page_title = "create_done";
 include("./header.php");
+include("functions/controller.php");
 
 $title = $_POST['title'];
 $content = $_POST['content'];
 
-$dsn = 'mysql:dbname=posts;host=localhost;charset=utf8';
-$user = 'root';
-$password = 'root';
-$dbh = new PDO($dsn,$user,$password);
-$dbh->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-
-$sql = 'INSERT INTO posts(title,content) VALUES (?,?)';
-$stmt = $dbh->prepare($sql);
-$stmt->bindValue(1,$title,PDO::PARAM_STR);
-$stmt->bindValue(2,$content,PDO::PARAM_STR);
+$controller = new Controller();
+$stmt = $controller->insertData($title,$content);
 $stmt->execute();
 
 $dbh = null;
